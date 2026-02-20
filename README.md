@@ -501,7 +501,7 @@ This repository is shared for demonstration and hackathon evaluation only.
 
 ### Commercial Licensing
 For commercial use, licensing inquiries, or partnerships:
-- **Contact:** virendra.jain@example.com (for inquiries)
+- **Contact:** virendrajain624@gmail.com (for inquiries)
 - **Project:** Lifeline AI
 - **Status:** Hackathon prototype (Feb 2026)
 
