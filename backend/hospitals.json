@@ -1,0 +1,42 @@
+[
+  {
+    "name": "MY Hospital",
+    "icu_beds": 10,
+    "distance_km": 1.0,
+    "rush_level": "high",
+    "ambulance_time_min": 12,
+    "police_alertness": "medium"
+  },
+  {
+    "name": "Choithram Hospital",
+    "icu_beds": 15,
+    "distance_km": 2.0,
+    "rush_level": "low",
+    "ambulance_time_min": 8,
+    "police_alertness": "high"
+  },
+  {
+    "name": "Varuns Hospital",
+    "icu_beds": 6,
+    "distance_km": 1.5,
+    "rush_level": "medium",
+    "ambulance_time_min": 9,
+    "police_alertness": "medium"
+  },
+  {
+    "name": "Gyarsidevi Hospital",
+    "icu_beds": 3,
+    "distance_km": 0.9,
+    "rush_level": "high",
+    "ambulance_time_min": 7,
+    "police_alertness": "low"
+  },
+  {
+    "name": "Community Care Clinic",
+    "icu_beds": 4,
+    "distance_km": 1.8,
+    "rush_level": "medium",
+    "ambulance_time_min": 10,
+    "police_alertness": "low"
+  }
+]

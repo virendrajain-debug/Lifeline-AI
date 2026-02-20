@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Lifeline AI – City Safety Control Dashboard</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            padding: 24px 32px;
+            max-width: 1320px;
+            width: 100%;
+            margin: 16px auto 32px auto;
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 4px;
+            font-size: 1.6rem;
+            color: #111827;
+        }
+
+        .subtitle {
+            margin: 0 0 20px 0;
+            font-size: 0.95rem;
+            color: #6b7280;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .label {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .value {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #111827;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .pill-danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .pill-safe {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 16px 0;
+        }
+
+        .footer-note {
+            margin-top: 16px;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-link {
+            font-size: 0.85rem;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.85rem;
+        }
+
+        th, td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        th {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #6b7280;
+        }
+
+        .row-selected {
+            background: #eff6ff;
+        }
+
+        .ps-section-title {
+            margin-top: 24px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .ps-card {
+            margin-top: 8px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: #0f172a;
+            color: #e5e7eb;
+        }
+
+        .ps-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .ps-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .badge-night {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #1f2937;
+            color: #facc15;
+            border: 1px solid #4b5563;
+        }
+
+        .ps-meta {
+            font-size: 0.8rem;
+            color: #d1d5db;
+            margin-bottom: 4px;
+        }
+
+        .ps-status {
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .ps-timeline {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .ps-chip {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 999px;
+            border: 1px solid #4b5563;
+        }
+
+        .ps-chip-done {
+            background: #16a34a;
+            border-color: #16a34a;
+            color: #ecfdf3;
+        }
+
+        .ps-chip-progress {
+            background: #f97316;
+            border-color: #f97316;
+            color: #fffbeb;
+        }
+
+        .ps-chip-pending {
+            background: transparent;
+            color: #9ca3af;
+        }
+
+        .camera-section-title {
+            margin-top: 28px;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .camera-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .camera-card {
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            padding: 12px 14px;
+            font-size: 0.85rem;
+        }
+
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .camera-title {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .camera-subtitle {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .status-pill {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        .status-emergency {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-normal {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-preventive {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .camera-meta {
+            margin-bottom: 4px;
+            color: #4b5563;
+        }
+
+        .video-preview {
+            margin-top: 6px;
+            margin-bottom: 6px;
+            height: 140px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+            overflow: hidden;
+        }
+
+        .camera-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2px;
+        }
+
+        .icon-label {
+            font-size: 0.75rem;
+            color: #374151;
+        }
+
+        .camera-link {
+            display: inline-flex;
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .camera-link:hover {
+            text-decoration: underline;
+        }
+
+        .tracking-badge {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 4px;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 999px;
+            border: 1px solid #4b5563;
+            color: #374151;
+            background: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Lifeline AI – City Safety Control Dashboard</h1>
+    <p class="subtitle">Prototype: accident response, public safety alerts, and preventive patrolling from city CCTV feeds.</p>
+
+    <div class="ps-section-title">Admin – Add CCTV / Video Feed</div>
+    <form action="/upload_feed" method="post" enctype="multipart/form-data" style="margin-bottom: 12px; font-size: 0.8rem;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
+            <div style="flex:1 1 160px;">
+                <label for="label" style="display:block; margin-bottom:2px; color:#4b5563;">Feed Label</label>
+                <input type="text" id="label" name="label" placeholder="e.g. New CCTV – Sector 9" style="width:100%; padding:4px 6px; font-size:0.8rem; border:1px solid #d1d5db; border-radius:6px;" />
+            </div>
+            <div style="flex:1 1 180px;">
+                <label for="video_file" style="display:block; margin-bottom:2px; color:#4b5563;">Video Footage</label>
+                <input type="file" id="video_file" name="video_file" accept="video/*" style="width:100%; font-size:0.8rem;" />
+            </div>
+            <div>
+                <button type="submit" style="margin-top:18px; padding:5px 10px; font-size:0.8rem; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer;">Upload &amp; Analyse</button>
+            </div>
+        </div>
+        <p class="footer-note" style="margin-top:4px;">Uploaded clips are stored in the backend video folder and analysed using the same Lifeline AI logic.</p>
+    </form>
+
+    <!-- Analyze Additional Footage Section -->
+    <div class="ps-section-title" style="margin-top: 32px;">Analyse Additional Footage</div>
+    <form id="analyzeForm" action="/upload_feed" method="post" enctype="multipart/form-data" style="margin-bottom: 12px; font-size: 0.8rem;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
+            <div style="flex:1 1 180px;">
+                <label for="analyze_video" style="display:block; margin-bottom:2px; color:#4b5563;">Select Video File</label>
+                <input type="file" id="analyze_video" name="video_file" accept="video/*" style="width:100%; font-size:0.8rem;" required />
+            </div>
+            <div style="flex:1 1 160px;">
+                <label for="analyze_label" style="display:block; margin-bottom:2px; color:#4b5563;">Feed Label (Optional)</label>
+                <input type="text" id="analyze_label" name="label" placeholder="e.g. Additional footage" style="width:100%; padding:4px 6px; font-size:0.8rem; border:1px solid #d1d5db; border-radius:6px;" />
+            </div>
+            <div>
+                <button type="submit" id="analyzeBtn" style="margin-top:18px; padding:5px 10px; font-size:0.8rem; background:#059669; color:#fff; border:none; border-radius:6px; cursor:pointer;">Analyse</button>
+            </div>
+        </div>
+        <p class="footer-note" style="margin-top:4px;">Upload and analyse additional footage with real-time progress indication.</p>
+    </form>
+
+    <!-- Loading Modal for Additional Analysis -->
+    <div id="loadingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+        <div style="background: #ffffff; border-radius: 12px; padding: 40px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); max-width: 500px; width: 90%;">
+            <div style="font-size: 2rem; margin-bottom: 20px;">🎬</div>
+            <h2 style="margin: 0 0 10px 0; color: #111827;">Processing Video Footage</h2>
+            <p style="margin: 0 0 20px 0; color: #6b7280; font-size: 0.9rem;">Uploading and running emergency detection AI</p>
+            
+            <!-- Overall progress bar -->
+            <div style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
+                <div id="overallProgressBar" style="height: 100%; background: linear-gradient(90deg, #059669, #10b981); width: 0%; animation: pulse 1.5s infinite;"></div>
+            </div>
+            
+            <!-- Status text -->
+            <p style="margin: 0 0 15px 0; color: #111827; font-size: 0.95rem; font-weight: 600;">
+                <span id="statusText">Uploading video file...</span>
+            </p>
+            
+            <!-- Phase breakdown -->
+            <div style="background: #f3f4f6; border-radius: 8px; padding: 12px; text-align: left; margin-bottom: 15px;">
+                <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 8px; font-weight: 600;">ANALYSIS PHASES:</div>
+                <div id="phasesList" style="font-size: 0.8rem; color: #374151; line-height: 1.6;">
+                    <div id="phase-upload" style="color: #6b7280;">📤 Uploading video file...</div>
+                    <div id="phase-load" style="color: #9ca3af;">⏳ Loading AI models...</div>
+                    <div id="phase-motion" style="color: #9ca3af;">⏳ Scanning frames for motion...</div>
+                    <div id="phase-temporal" style="color: #9ca3af;">⏳ Analyzing temporal patterns...</div>
+                    <div id="phase-causal" style="color: #9ca3af;">⏳ Running causal reasoning...</div>
+                    <div id="phase-validation" style="color: #9ca3af;">⏳ Validating emergency conditions...</div>
+                    <div id="phase-routing" style="color: #9ca3af;">⏳ Determining hospital routing...</div>
+                    <div id="phase-finalize" style="color: #9ca3af;">⏳ Finalizing analysis...</div>
+                </div>
+            </div>
+            
+            <p style="margin: 0; color: #9ca3af; font-size: 0.8rem;">
+                This may take 10-30 seconds depending on video length
+            </p>
+        </div>
+    </div>
+
+    <style>
+        @keyframes pulse {
+            0% { width: 10%; opacity: 1; }
+            50% { width: 70%; opacity: 0.8; }
+            100% { width: 90%; opacity: 0.6; }
+        }
+
+        #loadingModal[style*="display: flex"] {
+            display: flex !important;
+        }
+    </style>
+
+    <script>
+        // Ensure loading modal is hidden on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('loadingModal');
+            modal.style.display = 'none';
+        });
+
+        // Track progress state
+        let analysisPhases = [
+            { id: 'upload', label: 'Uploading video file...', duration: 0.08 },
+            { id: 'load', label: 'Loading AI models...', duration: 0.12 },
+            { id: 'motion', label: 'Scanning frames for motion...', duration: 0.15 },
+            { id: 'temporal', label: 'Analyzing temporal patterns...', duration: 0.18 },
+            { id: 'causal', label: 'Running causal reasoning...', duration: 0.16 },
+            { id: 'validation', label: 'Validating emergency conditions...', duration: 0.14 },
+            { id: 'routing', label: 'Determining hospital routing...', duration: 0.10 },
+            { id: 'finalize', label: 'Finalizing analysis...', duration: 0.07 }
+        ];
+
+        // Only show loading modal when "Analyse Additional Footage" form is submitted
+        document.getElementById('analyzeForm').addEventListener('submit', function(e) {
+            // Show loading modal only for additional analysis
+            const modal = document.getElementById('loadingModal');
+            modal.style.display = 'flex';
+            document.getElementById('analyzeBtn').disabled = true;
+            
+            // Reset progress
+            document.getElementById('overallProgressBar').style.width = '0%';
+            resetPhases();
+            
+            // Animate through phases
+            let totalDuration = analysisPhases.reduce((sum, p) => sum + p.duration, 0);
+            let elapsedTime = 0;
+            let currentPhaseIndex = 0;
+            
+            const phaseInterval = setInterval(() => {
+                if (currentPhaseIndex < analysisPhases.length) {
+                    const phase = analysisPhases[currentPhaseIndex];
+                    
+                    // Update status text
+                    document.getElementById('statusText').textContent = phase.label;
+                    
+                    // Mark current phase as active
+                    document.getElementById('phase-' + phase.id).style.color = '#059669';
+                    document.getElementById('phase-' + phase.id).innerHTML = '✓ ' + phase.label;
+                    
+                    // Update overall progress bar
+                    elapsedTime += phase.duration;
+                    const progress = Math.min((elapsedTime / totalDuration) * 100, 100);
+                    document.getElementById('overallProgressBar').style.width = progress + '%';
+                    
+                    currentPhaseIndex++;
+                } else {
+                    // All phases complete
+                    clearInterval(phaseInterval);
+                    document.getElementById('overallProgressBar').style.width = '100%';
+                    document.getElementById('statusText').textContent = 'Analysis complete. Refreshing dashboard...';
+                }
+            }, 1200);  // 1.2 seconds per phase
+            
+            // Allow form to submit normally
+            return true;
+        });
+
+        function resetPhases() {
+            analysisPhases.forEach(phase => {
+                const elem = document.getElementById('phase-' + phase.id);
+                elem.style.color = '#9ca3af';
+                elem.innerHTML = '⏳ ' + phase.label;
+            });
+        }
+    </script>
+
+    {% if op_time and op_time != '-' %}
+        <p class="label" style="margin-bottom: 8px;">Last Operation: {{ op_type }} – {{ op_label }} at {{ op_time }} (system time)</p>
+    {% endif %}
+
+    <div class="ps-section-title">Public Safety Alerts</div>
+    {% if not ps_threat_detected %}
+        <p class="label">3 public safety alerts . Trigger analysis via <code>/public_safety_detect</code>.</p>
+    {% else %}
+        <div class="ps-card">
+            <div class="ps-header">
+                <div class="ps-title">{{ ps_incident_type }}</div>
+                {% if ps_night_time %}
+                    <span class="badge-night">Night-time Detection</span>
+                {% endif %}
+            </div>
+            <div class="ps-meta">Time: {{ ps_time }}</div>
+            <div class="ps-meta">Location: {{ ps_location }}</div>
+            <div class="ps-status">Police: {{ ps_police_status }}</div>
+            <div class="ps-status">Patrol: {{ ps_patrol_status }}</div>
+            <div class="ps-timeline">
+                {% for s in ps_status_timeline %}
+                    {% set state = s.state %}
+                    <span class="ps-chip
+                        {% if state == 'done' %} ps-chip-done
+                        {% elif state == 'in_progress' %} ps-chip-progress
+                        {% else %} ps-chip-pending
+                        {% endif %}">
+                        {{ s.label }}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="ps-section-title">Predictive Public Safety</div>
+    <div class="ps-card" style="margin-top: 4px;">
+        <div class="ps-header">
+            <div class="ps-title">{{ pps_risk_level }}</div>
+            {% if pps_is_night %}
+                <span class="badge-night">Night-time</span>
+            {% endif %}
+        </div>
+        <div class="ps-meta">Time (real-time clock): {{ pps_time }}</div>
+        <div class="ps-meta">Crowd Density: {{ pps_density }} (varies area-wise across patrolled zones)</div>
+        <div class="ps-status">Patrol: {{ pps_patrol_suggestion }}(camera 4,3)</div>
+        <div class="ps-status">Monitoring: {{ pps_monitoring_note }}</div>
+        <p class="footer-note" style="margin-top: 8px;">
+            Risk is based only on environmental factors such as time and crowd density.
+        </p>
+    </div>
+
+    <div class="camera-section-title">City Cameras – Prioritized by Emergency</div>
+    <div class="camera-grid">
+        <!-- Camera 01: Road accident / collision detected (highest priority) -->
+        <div class="camera-card">
+            <div class="camera-header">
+                <div>
+                    <div class="camera-title">Camera 01</div>
+                    <div class="camera-subtitle">Jan Marg – Intersection A</div>
+                </div>
+                <span class="status-pill status-emergency">Accident</span>
+            </div>
+            <div class="camera-meta">GPS: 22.7196, 75.8577</div>
+            <div class="video-preview">
+                <video src="/camera1_video" width="100%" height="100%" autoplay loop muted playsinline preload="metadata">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="icon-label">🚑 Incident: Road Accident – Collision Detected</div>
+            <div class="camera-row">
+                <span class="icon-label">🏥 Response: Ambulance & Hospital Alerted</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label">🚔 Traffic Police Notified</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label">Person Count: 1 (victim)</span>
+                <span class="icon-label">Vehicle Count: 2</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label" style="color:#b91c1c;">Motion Status: No Movement (Victim)</span>
+                <span class="icon-label" style="color:#b91c1c;">AI Motion Tracking Active</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label"><strong>Emergency:</strong> {{ emergency }}</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label"><strong>Reason:</strong> {{ reason }}</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label" style="color:#059669;"><strong>Priority Hospital:</strong> Choithram Hospital</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label"><strong>Ambulance:</strong> {{ ambulance_status }}</span>
+            </div>
+            <a href="/camera/1" class="camera-link">View camera details →</a>
+        </div>
+        <!-- Camera 04: Dark alley, single entity high alert (second priority) -->
+        <div class="camera-card">
+            <div class="camera-header">
+                <div>
+                    <div class="camera-title">Camera 04</div>
+                    <div class="camera-subtitle">Jan Marg – Dark Alley</div>
+                </div>
+                <span class="status-pill status-preventive">Preventive Alert</span>
+            </div>
+            <div class="camera-meta">GPS: 22.7208, 75.8559</div>
+            <div class="video-preview">
+                <video src="/camera4_video" width="100%" height="100%" autoplay loop muted playsinline preload="metadata">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="icon-label">� Incident: High-Alert Night-Time Monitoring</div>
+            <div class="camera-row">
+                <span class="icon-label">Environment: Very Dark, Low Visibility</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label">Person Count: 1</span>
+                <span class="icon-label">Vehicle Count: 0</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label" style="color:#92400e;">Motion Pattern: Slow, Isolated</span>
+                <span class="icon-label" style="color:#92400e;">AI Motion Tracking Active</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label">Risk Level: High (Preventive)</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label" style="color:#92400e;"><strong>If Emergency:</strong> Choithram Hospital</span>
+            </div>
+            <a href="/camera/4" class="camera-link">View camera details →</a>
+        </div>
+
+        <!-- Camera 03: Low crowd, high preventive risk (third priority) -->
+        <div class="camera-card">
+            <div class="camera-header">
+                <div>
+                    <div class="camera-title">Camera 03</div>
+                    <div class="camera-subtitle">Jan Marg – Silent Stretch</div>
+                </div>
+                <span class="status-pill status-preventive">Preventive Alert</span>
+            </div>
+            <div class="camera-meta">GPS: 22.7203, 75.8565</div>
+            <div class="video-preview">
+                <video src="/camera3_video" width="100%" height="100%" autoplay loop muted playsinline preload="metadata">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="icon-label">🚨 Incident: Predictive Public Safety</div>
+            <div class="camera-row">
+                <span class="icon-label">Density: Low</span>
+                <span class="icon-label">Risk: High Risk Zone (Preventive)</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label">👮 Action: Preventive Patrol Suggested</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label">Person Count: 1–2</span>
+                <span class="icon-label">Vehicle Count: 0–1</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label" style="color:#92400e;">Motion Pattern: Focused / Directional</span>
+                <span class="icon-label" style="color:#92400e;">AI Motion Tracking Active</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label" style="color:#92400e;"><strong>If Emergency:</strong> Choithram Hospital</span>
+            </div>
+            <a href="/camera/3" class="camera-link">View camera details →</a>
+        </div>
+
+        <!-- Camera 02: High crowd, normal activity (lowest priority) -->
+        <div class="camera-card">
+            <div class="camera-header">
+                <div>
+                    <div class="camera-title">Camera 02</div>
+                    <div class="camera-subtitle">Bengaluru – Market Zone</div>
+                </div>
+                <span class="status-pill status-normal">Normal</span>
+            </div>
+            <div class="camera-meta">GPS: 22.7199, 75.8582</div>
+            <div class="video-preview">
+                <video src="/camera2_video" width="100%" height="100%" autoplay loop muted playsinline preload="metadata">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="icon-label">� Incident: Crowd Monitoring</div>
+            <div class="camera-row">
+                <span class="icon-label">Density: High</span>
+                <span class="icon-label">Risk: Normal Activity Zone</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label">Status: No Immediate Action Required</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label">Person Count: 25+</span>
+                <span class="icon-label">Vehicle Count: Few</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label" style="color:#166534;">Motion: Normal, Multi-directional</span>
+                <span class="icon-label" style="color:#166534;">AI Motion Tracking Active</span>
+            </div>
+            <div class="camera-row">
+                <span class="icon-label" style="color:#6b7280;"><strong>If Emergency:</strong> Sanskars Hospital (4 ICU beds, low rush, 5 min ETA)</span>
+            </div>
+            <a href="/camera/2" class="camera-link">View camera details →</a>
+        </div>
+    </div>
+
+    <!-- Ongoing operations summary table -->
+    <div class="ps-section-title">Ongoing Operations</div>
+    <div class="ps-card" style="margin-top: 4px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+            <thead>
+                <tr style="border-bottom: 1px solid #1f2937;">
+                    <th style="text-align: left; padding: 4px 6px;">Camera</th>
+                    <th style="text-align: left; padding: 4px 6px;">Location</th>
+                    <th style="text-align: left; padding: 4px 6px;">Operation</th>
+                    <th style="text-align: left; padding: 4px 6px;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom: 1px solid #111827;">
+                    <td style="padding: 4px 6px;">Camera 01</td>
+                    <td style="padding: 4px 6px;">Jan Marg – Intersection A</td>
+                    <td style="padding: 4px 6px;">Ambulance Dispatch</td>
+                    <td style="padding: 4px 6px;">{{ ambulance_status }}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #111827;">
+                    <td style="padding: 4px 6px;">Camera 03</td>
+                    <td style="padding: 4px 6px;">Jan Marg – Silent Stretch</td>
+                    <td style="padding: 4px 6px;">Preventive Patrol Readiness</td>
+                    <td style="padding: 4px 6px;">Patrol Ready / Suggested</td>
+                </tr>
+                <tr>
+                    <td style="padding: 4px 6px;">Camera 04</td>
+                    <td style="padding: 4px 6px;">Jan Marg – Dark Alley</td>
+                    <td style="padding: 4px 6px;">Police Deployment</td>
+                    <td style="padding: 4px 6px;">Police Deployed / Monitoring</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% if uploaded_feeds and uploaded_feeds|length > 0 %}
+        <div class="camera-section-title">Additional Cameras – Uploaded Feeds</div>
+        <div class="camera-grid">
+            {% for feed in uploaded_feeds %}
+                <div class="camera-card">
+                    <div class="camera-header">
+                        <div>
+                            <div class="camera-title">{{ feed.label or ('Uploaded Camera ' ~ feed.id) }}</div>
+                            <div class="camera-subtitle">Source: {{ feed.type }} · File: {{ feed.filename }}</div>
+                        </div>
+                        {% if feed.emergency %}
+                            <span class="status-pill status-emergency">Emergency</span>
+                        {% else %}
+                            <span class="status-pill status-normal">No Emergency</span>
+                        {% endif %}
+                    </div>
+                    <div class="camera-meta">Operation Time: {{ feed.time }}</div>
+                    <div class="video-preview">
+                        <video src="/uploaded_video/{{ feed.filename }}" width="100%" height="100%" autoplay loop muted playsinline preload="metadata">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="icon-label">📹 Incident: {{ 'Emergency pattern detected' if feed.emergency else 'No clear emergency pattern' }}</div>
+                    <div class="camera-row">
+                        <span class="icon-label">Reason: {{ feed.reason }}</span>
+                    </div>
+                    <div class="camera-row">
+                        <span class="icon-label">Selected Hospital: {{ feed.selected_hospital }}</span>
+                    </div>
+                    <a href="/feed/{{ feed.id }}" class="camera-link">Additional feed details →</a>
+                    <form action="/delete_feed/{{ feed.id }}" method="post" style="margin-top:6px;">
+                        <button type="submit" style="padding:3px 8px; font-size:0.75rem; background:#ef4444; color:#fff; border:none; border-radius:999px; cursor:pointer;">Delete Camera Card</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<!-- Footer -->
+<footer style="text-align: center; padding: 24px; margin-top: 40px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 0.9rem;">
+    © 2026 @Virendra Jain – All Rights Reserved
+</footer>
+
+</body>
+</html>
